@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Euphoria+Script&display=swap');
+
+html, body {min-height: 100%; margin: 0;}
+html {overflow-y: scroll;}
+body {
+  background: radial-gradient(circle at 50% 300px, #0c2656, #000d25 100%), #0c2656;
+  background-attachment: fixed;
+  margin: 0;
+}
+
+#card-toggle {
+
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+}
+
+$cardMaxWidth: 500px;
+$cardHeight: 333px;
+.card {
+
+  display: block;
+  position: relative;
+  z-index: 2;
+  
+  perspective: 2000px;
+  
+  margin: 50px auto;
+  width: 90%;
+  max-width: $cardMaxWidth;
+  height: $cardHeight;
+}
+
+.card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #FAFAFA;
+  cursor: pointer;
+  transition: all 0.5s ease-out;
+  transform-origin: 0 0;
+}
+ 
+.front-flap {
+
+  transform: rotateX(21deg);
+
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+
+  &.outside {
+
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    z-index: 5;
+  }
+
+  &.inside {
+    z-index: 4;
+    background: #F2F2F2;
+  }
+}
+
+
+
+.back-flap.inside {
+  z-index: 2;
+  transform: rotateX(-4deg);
+  box-shadow: 0 0px 5px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.25);
+}
+
+.card:hover .front-flap {
+  transform: rotateX(24deg);
+  box-shadow: 0 10px 10px rgba(0,0,0,0.15);
+}
+
+#card-toggle:checked + .card {
+
+  .front-flap {
+    transform: rotateX(165deg);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08), 5px 5px 5px rgba(0, 0, 0, 0.08), -5px 5px 5px rgba(0, 0, 0, 0.08);
+  }
+
+  .back-flap {
+    transform: rotateX(-1deg);
+    box-shadow: 0 -5px 10px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.25);
+  }
+}
+
+
+.card-face {
+  display: flex;
+  padding: 10px;
+  box-sizing: border-box;
+  
+  .card-face-content {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    font-family: 'Euphoria Script', cursive;
+    text-align: center;
+  }
+  
+  &.front-flap .card-face-content {
+    color: #fff;
+    background: repeating-linear-gradient(36deg, transparent, transparent 50px, 0, rgba(255,255,255,0.05) 90px), #551313;
+    text-shadow: 0 2px 5px #000;
+  }
+  
+  &.front-flap.inside {
+
+    background: linear-gradient(to bottom, #EEE, #FAFAFA 25%);
+    
+  }
+  
+  &.back-flap .card-face-content .card-text {
+    transform: skewY(-8deg);
+  }
+}
+
+$photoWidth: 250px;
+$photoHeight: 166px;
+.photo {
+
+  position: absolute;
+  height: $photoHeight;
+  width: $photoWidth;
+  top: 50px;
+  left: 50%;
+  margin-left: $photoWidth * -.5;
+
+  z-index: 3;
+
+  pointer-events: none;
+
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.25);
+  border: 4px solid #fff;
+  border-radius: 1px;
+  box-sizing: border-box;
+
+  transition: all .5s .06s ease-out;
+
+  transform: translate(-50px, 0px) rotate(-90deg);
+
+  &:nth-of-type(3n) {
+    transform: translate(50px, 0px) rotate(90deg);
+  }
+  
+
+  @media (max-width: 350px) {
+    &:nth-of-type(1n) {
+      width: 200px;
+      margin-left: -100px;
+      transform: translate(0px, 0px) rotate(-90deg);
+    }
+  }
+
+  > img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+
+  &:last-child::after {
+    content:'';
+    display: block;
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 100%;
+  }
+}
+
+
+#card-toggle:checked + .card .photo {
+  transition: all .5s .06s ease-out;
+
+  &:nth-of-type(1) {transition: all .9s .12s ease-out;}
+  &:nth-of-type(2) {transition: all .8s .10s ease-out;}
+  &:nth-of-type(3) {transition: all .7s .09s ease-out;}
+  &:nth-of-type(4) {transition: all .6s .07s ease-out;}
+  
+  $numOfPhotos: 10;
+
+  $startY: $cardHeight * .65;
+
+  $addEven: $photoHeight * .2;
+  $addOdd: $photoHeight * .8 + 5px;
+
+  $currentY: $startY - $addOdd;
+  $baseX: $photoWidth * .5;
+  // Now we loop...
+  @for $i from 1 through $numOfPhotos {
+   
+    $x: $baseX + (random(21) - 11);
+
+    @if $i % 2 == 0 {
+      $currentY: $currentY + $addEven;
+    } @else {
+      $currentY: $currentY + $addOdd;
+
+      $x: $x * -1; 
+    }
+  
+    $y: $currentY + (random(21) - 11);
+    &:nth-of-type(#{$i}) {transform: translate($x, $y) rotate(random(11) - 6deg);}
+
+  }
+  
+
+  @media (max-width: 572px) {
+    $addSingle: $photoHeight + 5px;
+    $currentY: $startY - $addSingle;
+    @for $i from 1 through $numOfPhotos {
+      $currentY: $currentY + $addSingle;
+      $x: random(21) - 11px;
+      $y: $currentY + (random(21) - 11);
+      &:nth-of-type(#{$i}) {transform: translate($x, $currentY) rotate(random(11) - 6deg);}
+    }
+  }
+  
+}
+
